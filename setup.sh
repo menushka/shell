@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 
 # Check if Zsh is installed
 if ! command -v zsh &> /dev/null; then
