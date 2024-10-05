@@ -44,9 +44,18 @@ else
 fi
 
 # Set Zsh theme to Powerlevel10k in .zshrc
-if ! grep -q "ZSH_THEME=\"powerlevel10k/powerlevel10k\"" "$HOME/.zshrc"; then
+if ! grep -q 'ZSH_THEME="powerlevel10k/powerlevel10k"' "$HOME/.zshrc"; then
   echo "Setting Powerlevel10k as the default theme in .zshrc..."
-  sed -i '' 's/ZSH_THEME=".*"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$HOME/.zshrc"
+  
+  # Check if the OS is macOS or Linux
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS
+    sed -i '' 's/^ZSH_THEME=".*"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$HOME/.zshrc"
+  elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    # Linux
+    sed -i 's/^ZSH_THEME=".*"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$HOME/.zshrc"
+  fi
+  
 else
   echo "Powerlevel10k is already set as the default theme."
 fi
