@@ -70,4 +70,12 @@ else
   echo "Failed to download Powerlevel10k config file. Please check the URL."
 fi
 
+# Ensure .zshrc is sourcing .p10k.zsh for Powerlevel10k configuration
+if ! grep -q '[ -f ~/.p10k.zsh ] && source ~/.p10k.zsh' "$HOME/.zshrc"; then
+  echo "Adding Powerlevel10k config source to .zshrc..."
+  echo '[ -f ~/.p10k.zsh ] && source ~/.p10k.zsh' >> "$HOME/.zshrc"
+else
+  echo "Powerlevel10k config is already sourced in .zshrc."
+fi
+
 echo "Setup completed!"
