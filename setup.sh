@@ -19,6 +19,14 @@ check_font_installed() {
   return 1
 }
 
+# Check if Homebrew is installed, if not, install it
+if ! command -v brew &> /dev/null; then
+  echo "Homebrew not found. Installing Homebrew..."
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+else
+  echo "Homebrew already installed."
+fi
+
 # Check if Zsh is installed
 if ! command -v zsh &> /dev/null; then
   echo "Zsh is not installed. Installing Zsh..."
@@ -64,19 +72,17 @@ else
   if [[ "$OSTYPE" == "darwin"* ]]; then
     echo "Running on macOS..."
 
-    # Check if Homebrew is installed, if not, install it
-    if ! command -v brew &> /dev/null; then
-      echo "Homebrew not found. Installing Homebrew..."
-      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    fi
-
     # Tap the Homebrew fonts repository
     brew tap homebrew/cask-fonts
 
     # Install MesloLGS NF font
     brew install --cask font-meslo-lg-nerd-font
 
-    echo "MesloLGS NF fonts installed on macOS."
+    echo "MesloLGS NF fonts installed."
+
+    plutil -replace 'New Bookmarks.0.Normal Font' -string "MesloLGLNFM-Regular 11" "$HOME/Library/Preferences/com.googlecode.iterm2.plist"
+
+    echo "MesloLGS NF fonts set as default in iTerm2."
 
   elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
     # Create a local font directory if it doesn't exist
