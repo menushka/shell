@@ -70,13 +70,11 @@ if check_font_installed "MesloLGS NF Regular.ttf" && \
   echo "MesloLGS NF fonts are already installed."
 else
   if [[ "$OSTYPE" == "darwin"* ]]; then
-    echo "Running on macOS..."
-
     # Tap the Homebrew fonts repository
     brew tap homebrew/cask-fonts
 
     # Install MesloLGS NF font
-    brew install --cask font-meslo-lg-nerd-font
+    brew install font-meslo-lg-nerd-font
 
     echo "MesloLGS NF fonts installed."
 
