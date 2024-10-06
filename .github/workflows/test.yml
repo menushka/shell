@@ -9,8 +9,8 @@ on:
       - master
 
 jobs:
-  macos-test:
-    runs-on: macos-latest
+  macos:
+    runs-on: macos-14
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -19,8 +19,8 @@ jobs:
         run: |
           ./setup.sh
 
-  ubuntu-test:
-    runs-on: ubuntu-latest
+  ubuntu:
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
