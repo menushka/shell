@@ -1,5 +1,24 @@
 #!/bin/bash
 
+# Function to check if a font is installed (works for both macOS and Ubuntu)
+check_font_installed() {
+  local font_name="$1"
+  
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    # Check in the user's Library/Fonts folder on macOS
+    if ls "$HOME/Library/Fonts/$font_name" &> /dev/null; then
+      return 0
+    fi
+  elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    # Check in the local fonts directory on Ubuntu
+    if ls "$HOME/.local/share/fonts/$font_name" &> /dev/null; then
+      return 0
+    fi
+  fi
+  
+  return 1
+}
+
 # Check if Zsh is installed
 if ! command -v zsh &> /dev/null; then
   echo "Zsh is not installed. Installing Zsh..."
@@ -33,6 +52,54 @@ if [ ! -d "$HOME/.oh-my-zsh" ]; then
   sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 else
   echo "Oh My Zsh is already installed."
+fi
+
+# Check if the fonts are already installed
+if check_font_installed "MesloLGS NF Regular.ttf" && \
+   check_font_installed "MesloLGS NF Bold.ttf" && \
+   check_font_installed "MesloLGS NF Italic.ttf" && \
+   check_font_installed "MesloLGS NF Bold Italic.ttf"; then
+  echo "MesloLGS NF fonts are already installed."
+else
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    echo "Running on macOS..."
+
+    # Check if Homebrew is installed, if not, install it
+    if ! command -v brew &> /dev/null; then
+      echo "Homebrew not found. Installing Homebrew..."
+      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    fi
+
+    # Tap the Homebrew fonts repository
+    brew tap homebrew/cask-fonts
+
+    # Install MesloLGS NF font
+    brew install --cask font-meslo-lg-nerd-font
+
+    echo "MesloLGS NF fonts installed on macOS."
+
+  elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    # Create a local font directory if it doesn't exist
+    FONT_DIR="$HOME/.local/share/fonts"
+    mkdir -p "$FONT_DIR"
+
+    # Download the fonts
+    curl -fsSL "https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf" -o "$FONT_DIR/MesloLGS NF Regular.ttf"
+    curl -fsSL "https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold.ttf" -o "$FONT_DIR/MesloLGS NF Bold.ttf"
+    curl -fsSL "https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Italic.ttf" -o "$FONT_DIR/MesloLGS NF Italic.ttf"
+    curl -fsSL "https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold%20Italic.ttf" -o "$FONT_DIR/MesloLGS NF Bold Italic.ttf"
+
+    echo "MesloLGS NF fonts installed in $FONT_DIR."
+
+    # Refresh the font cache
+    fc-cache -f -v
+
+    echo "Font cache updated on Ubuntu."
+
+  else
+    echo "Unsupported operating system. This script supports macOS and Ubuntu only."
+    exit 1
+  fi
 fi
 
 # Install Powerlevel10k theme if not installed
@@ -73,7 +140,8 @@ fi
 # Ensure .zshrc is sourcing .p10k.zsh for Powerlevel10k configuration
 if ! grep -q '[ -f ~/.p10k.zsh ] && source ~/.p10k.zsh' "$HOME/.zshrc"; then
   echo "Adding Powerlevel10k config source to .zshrc..."
-  echo '[ -f ~/.p10k.zsh ] && source ~/.p10k.zsh' >> "$HOME/.zshrc"
+  echo '\n# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.\n' >> "$HOME/.zshrc"
+  echo '[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh' >> "$HOME/.zshrc"
 else
   echo "Powerlevel10k config is already sourced in .zshrc."
 fi
