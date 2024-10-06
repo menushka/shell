@@ -144,7 +144,7 @@ else
 fi
 
 # Ensure .zshrc is sourcing .p10k.zsh for Powerlevel10k configuration
-if ! grep -q '[ -f ~/.p10k.zsh ] && source ~/.p10k.zsh' "$HOME/.zshrc"; then
+if ! grep -q '[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh' "$HOME/.zshrc"; then
   echo "Adding Powerlevel10k config source to .zshrc..."
   echo '' >> "$HOME/.zshrc"
   echo '# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.' >> "$HOME/.zshrc"
